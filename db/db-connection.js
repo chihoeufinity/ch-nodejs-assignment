@@ -16,9 +16,10 @@ connection.connect(async function(err) {
     console.log("Connected!");
     
     let sql = "CREATE TABLE IF NOT EXISTS student (" +
-            "student_email VARCHAR(255) NOT NULL UNIQUE," + 
+            "student_email VARCHAR(255) NOT NULL," + 
             "teacher_email VARCHAR(255) NOT NULL," +
-            "status TINYINT NOT NULL)";
+            "status TINYINT NOT NULL," +
+            "PRIMARY KEY (student_email, teacher_email));"
             
     connection.query(sql, function (err, result) {
         if (err) throw err;

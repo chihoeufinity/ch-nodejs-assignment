@@ -23,8 +23,14 @@ const functions = {
   },
 
   getCommonStudents: async function (query) {
-    let queryStr = `SELECT student_email FROM student WHERE teacher_email = "${query}";`;
-   
+    let teacherEmail = [];
+    if (!Array.isArray(query)) {
+      teacherEmail.push(query);
+    } else {
+      teacherEmail = query;
+    }
+    let queryStr = `SELECT distinct student_email FROM student WHERE teacher_email IN ('${teacherEmail.join("','")}');`;
+    
     return connection.promise().query(queryStr).then(data => {
       // return selected rows
       let studentEmail = [];
