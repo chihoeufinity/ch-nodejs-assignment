@@ -7,7 +7,63 @@
 	},
 	"item": [
 		{
-			"name": "localhost:3306/api/register",
+			"name": "localhost:3000/api/registerTeacher",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"teacher\": \"teacherken@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/registerTeacher",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"registerTeacher"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:3000/api/registerTeacher Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"teacher\": \"teacherjoe@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/registerTeacher",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"registerTeacher"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:3000/api/register",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -21,11 +77,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:3306/api/register",
+					"raw": "localhost:3000/api/register",
 					"host": [
 						"localhost"
 					],
-					"port": "3306",
+					"port": "3000",
 					"path": [
 						"api",
 						"register"
@@ -35,7 +91,7 @@
 			"response": []
 		},
 		{
-			"name": "localhost:3306/api/register",
+			"name": "localhost:3000/api/register",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -49,11 +105,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:3306/api/register",
+					"raw": "localhost:3000/api/register",
 					"host": [
 						"localhost"
 					],
-					"port": "3306",
+					"port": "3000",
 					"path": [
 						"api",
 						"register"
@@ -63,16 +119,16 @@
 			"response": []
 		},
 		{
-			"name": "localhost:3306/api/commonstudents?teacher=teacherken%40gmail.com",
+			"name": "localhost:3000/api/commonstudents?teacher=teacherken%40gmail.com",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:3306/api/commonstudents?teacher=teacherken%40gmail.com",
+					"raw": "localhost:3000/api/commonstudents?teacher=teacherken%40gmail.com",
 					"host": [
 						"localhost"
 					],
-					"port": "3306",
+					"port": "3000",
 					"path": [
 						"api",
 						"commonstudents"
@@ -88,7 +144,7 @@
 			"response": []
 		},
 		{
-			"name": "localhost:3306/api/commonstudents?teacher=teacherken%40gmail.com&teacher=teacherjoe%40gmail.com",
+			"name": "localhost:3000/api/commonstudents?teacher=teacherken%40gmail.com&teacher=teacherjoe%40gmail.com",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -117,7 +173,7 @@
 			"response": []
 		},
 		{
-			"name": "localhost:3306/api/suspend",
+			"name": "localhost:3000/api/suspend",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -131,11 +187,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:3306/api/suspend",
+					"raw": "localhost:3000/api/suspend",
 					"host": [
 						"localhost"
 					],
-					"port": "3306",
+					"port": "3000",
 					"path": [
 						"api",
 						"suspend"
@@ -145,7 +201,7 @@
 			"response": []
 		},
 		{
-			"name": "localhost:3306/api/retrievefornotifications",
+			"name": "localhost:3000/api/retrievefornotifications",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -173,7 +229,7 @@
 			"response": []
 		},
 		{
-			"name": "localhost:3306/api/retrievefornotifications",
+			"name": "localhost:3000/api/retrievefornotifications",
 			"request": {
 				"method": "POST",
 				"header": [],
