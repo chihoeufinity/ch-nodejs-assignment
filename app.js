@@ -1,11 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-
+import db from './src/api/models/index.js'
 // routes 
-import routes from './routes/index.js';
+import studentRoutes from './src/api/routes/studentRouter.js';
+import teacherRoutes from './src/api/routes/teacherRouter.js';
 
 const host = process.env.DB_HOST || "localhost";
-const port = process.env.PORT || 3306;
+const port = process.env.PORT || 3000;
 // Set up the express app
 const app = express();
 
@@ -13,7 +14,8 @@ const app = express();
 app.use(bodyParser.json());
 
 // Require our routes into the application.
-app.use('/', routes);
+app.use('/', studentRoutes);
+app.use('/', teacherRoutes);
 
 app.get('*', (req, res) => res.status(200).send({
   message: 'Welcome to the beginning of nothingness.',
@@ -22,6 +24,14 @@ app.get('*', (req, res) => res.status(200).send({
 // Server listen to port
 app.listen(port, host, function(){
   console.log('Listening on port/host ' + host + ":" + port);
+});
+
+db.sequelize.sync()
+  .then(() => {
+    console.log("Synced db.");
+  })
+  .catch((err) => {
+    console.log("Failed to sync db: " + err.message);
 });
 
 export default app;
