@@ -24,7 +24,7 @@ const registerStudent = async function (req, res, next) {
 
         // Call service to response with data
         let result = await studentService.registerStudents(req.body.teacher, req.body.students);
-        res.status(StatusCodes.NO_CONTENT).send({});
+        res.status(StatusCodes.NO_CONTENT).send({status: "success", message: result});
     } catch (err) {
         res.status(StatusCodes.BAD_REQUEST).send({
             message: "Failed to register", 
