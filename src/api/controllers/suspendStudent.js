@@ -1,11 +1,8 @@
 'use strict'
 
-import { Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import studentService from './../services/studentServices.js';
 import { emailValidation } from '../utils/index.js';
-const router = Router();
-
 
 const suspendStudent = async function (req, res, next) {
     try {
@@ -28,7 +25,10 @@ const suspendStudent = async function (req, res, next) {
         let result = await studentService.suspendStudent(req.body.student);
         res.status(StatusCodes.NO_CONTENT).send({});
     } catch (err) {
-        res.status(StatusCodes.BAD_REQUEST).send({message: "Failed to suspend", error: err});
+        res.status(StatusCodes.BAD_REQUEST).send({
+            message: "Failed to suspend", 
+            error: "Failed to update data for this request"
+        });
     }
 }
 

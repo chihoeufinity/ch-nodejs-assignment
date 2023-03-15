@@ -28,7 +28,7 @@ const registerStudent = async function (req, res, next) {
     } catch (err) {
         res.status(StatusCodes.BAD_REQUEST).send({
             message: "Failed to register", 
-            error: err.errors?.map(e => e.message) || err.message
+            error: "Failed to insert data for this request"
         });
     }
 }

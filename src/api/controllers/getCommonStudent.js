@@ -28,7 +28,10 @@ const getCommonStudents = async function (req, res, next) {
         let result = await studentService.getCommonStudents(req.query.teacher);
         res.status(StatusCodes.OK).send({status: "success", students: result});
     } catch (err) {
-        res.status(StatusCodes.BAD_REQUEST).send({message: "Failed to get common students", error: err});
+        res.status(StatusCodes.BAD_REQUEST).send({
+            message: "Failed to get common students", 
+            error: "Failed to retrieve data for this request"
+        });
     }
 }
 

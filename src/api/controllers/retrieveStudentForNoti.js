@@ -35,7 +35,10 @@ const retrieveStudentForNoti = async function (req, res, next) {
         let result = await studentService.retrieveStudentForNoti(req.body.teacher, emailArr);
         res.status(StatusCodes.OK).send({status: "success", recipients: result});
     } catch (err) {
-        res.status(StatusCodes.BAD_REQUEST).send({message: "Failed to retrieve students for notification", error: err});
+        res.status(StatusCodes.BAD_REQUEST).send({
+            message: "Failed to retrieve students for notification", 
+            error: "Failed to retrieve data for this request"
+        });
     }
 }
 
