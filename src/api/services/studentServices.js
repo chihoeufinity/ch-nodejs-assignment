@@ -56,24 +56,25 @@ const functions = {
     }
 
     return await db.student.findAll({
-        attributes: ['email'],
-        raw: true,
+        attributes: [
+            'email'
+        ],
         include:[{
             model: db.teacher,
-            attributes: ['email'],
             where: {email: teacherEmail}
-        }]
-    }).then((data, err) => {
+        }],
+        group: ['student.id', 'teachers.id']
+    }).then(function (data, err) {
         if (err) {
             throw err;
         }
-
+        let result = data.map(el => el.get({ plain: true })) || [];
         let studentEmail = [];
-        if (data?.length) {
-            data.forEach(e => {
-                if (!studentEmail.includes(e.email)){
+        if (result?.length) {
+            result.forEach(e => {
+               if (e.teachers.length === teacherEmail.length) {
                     studentEmail.push(e.email);
-                }
+               }
             })
         }
         return studentEmail;
@@ -81,6 +82,13 @@ const functions = {
   },
 
   suspendStudent: async function (student) {
+    let studentData = await db.student.findOne({where: {email: student}});
+    if (!studentData) {
+        throw new Error("student does not exists");
+    }
+    if (!studentData.status) {
+        throw new Error("student already suspended");
+    }
     return await db.student.update(
         { status: false },
         { where: { email: student} }
@@ -88,6 +96,20 @@ const functions = {
   },
 
   retrieveStudentForNoti: async function (teacher, students) {
+    let teacherData = await db.teacher.findOne({where: {email: teacher}});
+    if (!teacherData) {
+        throw new Error("teacher does not exists");
+    }
+    let studentEmail = [];
+    await db.student.findAll({where: {email: students}}).then(function (data, err) {
+        let result = data.map(el => el.get({ plain: true })) || [];
+        if (result?.length) {
+            result.forEach(e => {
+                studentEmail.push(e.email);
+             })
+        }
+    });
+
     return await db.student.findAll({
         attributes: ['email'],
         raw: true,
@@ -95,13 +117,13 @@ const functions = {
             model: db.teacher,
             attributes: ['email'],
             where: {email: teacher}
-        }]
+        }],
+        where: { status: true }
     }).then((data, err) => {
         if (err) {
             throw err;
         }
 
-        let studentEmail = students;
         if (data?.length) {
             data.forEach(e => {
                 if (!studentEmail.includes(e.email)){
@@ -109,6 +131,11 @@ const functions = {
                 }
             })
         }
+
+        if(!studentEmail.length) {
+            throw new Error("No student found");
+        }
+
         return studentEmail;
     });
   }

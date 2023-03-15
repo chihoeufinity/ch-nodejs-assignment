@@ -25,12 +25,13 @@ const registerTeacher = async function (req, res, next) {
 
         // Call service to response with data
         let result = await teacherService.registerTeacher(req.body.teacher);
-        res.status(StatusCodes.NO_CONTENT).send({status: "success", message: result});
+        res.status(StatusCodes.NO_CONTENT).send({});
     } catch (err) {
         res.status(StatusCodes.BAD_REQUEST).send({
             message: "Failed to register", 
-            error: "Failed to insert data for this request"
+            error: err.message || "Failed to insert data for this request"
         });
+        return;
     }
 }
 

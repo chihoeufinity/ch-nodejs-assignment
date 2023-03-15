@@ -15,6 +15,7 @@ const retrieveStudentForNoti = async function (req, res, next) {
                 message: "Failed to retrieve students for notification",
                 error: "Invalid Request"
             });
+            return;
         }
 
         let emailArr = [];
@@ -33,12 +34,13 @@ const retrieveStudentForNoti = async function (req, res, next) {
         }
 
         let result = await studentService.retrieveStudentForNoti(req.body.teacher, emailArr);
-        res.status(StatusCodes.OK).send({status: "success", recipients: result});
+        res.status(StatusCodes.OK).send({recipients: result});
     } catch (err) {
         res.status(StatusCodes.BAD_REQUEST).send({
             message: "Failed to retrieve students for notification", 
-            error: "Failed to retrieve data for this request"
+            error: err.message || "Failed to retrieve data for this request"
         });
+        return;
     }
 }
 

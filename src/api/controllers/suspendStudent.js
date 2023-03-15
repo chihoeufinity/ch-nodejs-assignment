@@ -27,8 +27,9 @@ const suspendStudent = async function (req, res, next) {
     } catch (err) {
         res.status(StatusCodes.BAD_REQUEST).send({
             message: "Failed to suspend", 
-            error: "Failed to update data for this request"
+            error: err.message || "Failed to update data for this request"
         });
+        return;
     }
 }
 
