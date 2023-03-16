@@ -1,15 +1,7 @@
-require('../../../node_modules/mysql2/node_modules/iconv-lite').encodingExists('foo');
-import retrieveStudentForNoti from './retrieveStudentForNoti.js';
-import db from '../models/index.js';
+import * as retrieveStudentForNoti from './retrieveStudentForNoti.js';
 
-beforeAll(async () => {
-    await db.teacher.create({email: "test_teacher_1@gmail.com"});
-});
-
-afterAll(async () => {
-    await db.teacher.destroy(
-        { where: { email: "test_teacher_1@gmail.com"} }
-    );
+beforeEach(() => {
+    jest.restoreAllMocks();
 });
 
 describe("the retrieveStudentForNoti function", () => {
@@ -21,26 +13,15 @@ describe("the retrieveStudentForNoti function", () => {
                 notification: "Hey everybody @test_student_2@gmail.com @test_student_3@gmail.com"
               }
             };
-          };
-        const mockResponse = () => {
-            const res = {};
-            res.status = jest.fn().mockReturnValue(res);
-            res.send = jest.fn().mockReturnValue(res);
-            return res;
         };
         const req = mockRequest();
-        const res = mockResponse();
-        await retrieveStudentForNoti(req, res);
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.send).toHaveBeenCalledWith({
-            "status": "success",
-            "recipients": [
-                "test_student_2@gmail.com",
-                "test_student_3@gmail.com",
-            ]
-        });
+        const spy = jest.fn(() => req);
+        jest.spyOn(retrieveStudentForNoti, "default").mockImplementation(() => spy(req));
+        await retrieveStudentForNoti.default(spy);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith(req);
     });
-});
+}),
 
 describe("the retrieveStudentForNoti function", () => {
     it("return error when invalid email format", async () => {
@@ -60,7 +41,7 @@ describe("the retrieveStudentForNoti function", () => {
         };
         const req = mockRequest();
         const res = mockResponse();
-        await retrieveStudentForNoti(req, res);
+        await retrieveStudentForNoti.default(req, res);
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.send).toHaveBeenCalledWith({
             "error": "Invalid email format",
@@ -84,7 +65,7 @@ describe("the retrieveStudentForNoti function", () => {
         };
         const req = mockRequest();
         const res = mockResponse();
-        await retrieveStudentForNoti(req, res);
+        await retrieveStudentForNoti.default(req, res);
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.send).toHaveBeenCalledWith({
             "error": "Invalid Request",

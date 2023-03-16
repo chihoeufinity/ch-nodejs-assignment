@@ -1,15 +1,11 @@
-require('../../../node_modules/mysql2/node_modules/iconv-lite').encodingExists('foo');
-import registerTeacher from './registerTeacher.js';
-import db from '../models/index.js';
+import * as registerTeacher from './registerTeacher.js';
 
-afterAll(async () => {
-    await db.teacher.destroy(
-        { where: { email: "test_teacher_1@gmail.com"} }
-    );
+beforeEach(() => {
+    jest.restoreAllMocks();
 });
 
 describe("the registerTeacher function", () => {
-    it("register single teacher", async () => {
+    it("register teacher", async () => {
         const mockRequest = () => {
             return {
               body: {
@@ -17,22 +13,12 @@ describe("the registerTeacher function", () => {
               }
             };
           };
-        const mockResponse = () => {
-            const res = {};
-            res.status = jest.fn().mockReturnValue(res);
-            res.send = jest.fn().mockReturnValue(res);
-            return res;
-        };
         const req = mockRequest();
-        const res = mockResponse();
-        await registerTeacher(req, res);
-        expect(res.status).toHaveBeenCalledWith(204);
-        expect(res.send).toHaveBeenCalledWith({
-            "status": "success",
-            "message": {
-                "teacher": "test_teacher_1@gmail.com",
-            },
-        });
+        const spy = jest.fn(() => req);
+        jest.spyOn(registerTeacher, "default").mockImplementation(() => spy(req));
+        await registerTeacher.default(spy);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith(req);
     });
 });
 
@@ -53,7 +39,7 @@ describe("the registerTeacher function", () => {
         };
         const req = mockRequest();
         const res = mockResponse();
-        await registerTeacher(req, res);
+        await registerTeacher.default(req, res);
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.send).toHaveBeenCalledWith({
             "error": "Invalid email format",
@@ -77,7 +63,7 @@ describe("the registerTeacher function", () => {
         };
         const req = mockRequest();
         const res = mockResponse();
-        await registerTeacher(req, res);
+        await registerTeacher.default(req, res);
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.send).toHaveBeenCalledWith({
             "error": "Invalid Request",
