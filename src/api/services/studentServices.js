@@ -21,25 +21,25 @@ const functions = {
     });
 
     let existingStudentId = existingStudent.map(s => s.id) || [];
-    let studentToSkip = [];
+    let existingTeacherStudent = [];
 
     if (teacherId && existingStudentId) {
         // Get existing teacher-student relationship to skip adding these records
-        let existingTeacherStudent = await db.teacher_student.findAll({
+        existingTeacherStudent = await db.teacher_student.findAll({
             where: {
                 teacher_id: teacherId,
                 student_id: existingStudentId
             }, raw: true
         });
 
-        studentToSkip = existingStudent.filter(o1 => existingTeacherStudent.some(o2 => o1.id === o2.student_id));
+        existingTeacherStudent = existingStudent.filter(o1 => existingTeacherStudent.some(o2 => o1.id === o2.student_id));
     }
 
     let newStudentObj =  students.map(s => ({
         email: s
     })).filter(o1 => !existingStudent.some(o2 => o1.email === o2.email));
 
-    existingStudent = existingStudent.filter(o1 => !studentToSkip.some(o2 => o1.id === o2.id));
+    let newTeacherStudentRecord = existingStudent.filter(o1 => !existingTeacherStudent.some(o2 => o1.id === o2.id));
 
     return await db.sequelize.transaction(async (t) => {
         let studentId = [];
@@ -48,7 +48,7 @@ const functions = {
             if (err) {
              throw err;
             }
-            const studentList = [...student, ...existingStudent];
+            const studentList = [...student, ...newTeacherStudentRecord];
             studentId = studentList.map(s => s.id).filter(s => s != null);
             return student;
          });
