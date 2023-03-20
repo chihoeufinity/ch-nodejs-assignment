@@ -10,10 +10,20 @@ const router = Router({
   caseSensitive: true
 })
 
-// Use imported routes in router
-router.use('/api/register', registerStudent);
-router.use('/api/commonstudents', getCommonStudents);
-router.use('/api/suspend', suspendStudent);
-router.use('/api/retrievefornotifications', retrieveStudentForNoti);
+router.post('/api/register', (req, res) => {
+  registerStudent(req, res);
+})
+
+router.get('/api/commonstudents', (req, res) => {
+  getCommonStudents(req, res);
+})
+
+router.post('/api/suspend', (req, res) => {
+  suspendStudent(req, res);
+})
+
+router.post('/api/retrievefornotifications', (req, res) => {
+  retrieveStudentForNoti(req, res);
+})
 
 export default router;

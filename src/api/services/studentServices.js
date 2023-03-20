@@ -15,15 +15,35 @@ const functions = {
         return data.id;
     });
     
-    let existingStudent = await db.student.findAll({where: {email: students}}) || [];
+    let existingStudent = await db.student.findAll({
+        where: {email: students},
+        raw: true
+    });
 
-    let studentObj = students.map(s => ({
+    let existingStudentId = existingStudent.map(s => s.id) || [];
+    let studentToSkip = [];
+
+    if (teacherId && existingStudentId) {
+        // Get existing teacher-student relationship to skip adding these records
+        let existingTeacherStudent = await db.teacher_student.findAll({
+            where: {
+                teacher_id: teacherId,
+                student_id: existingStudentId
+            }, raw: true
+        });
+
+        studentToSkip = existingStudent.filter(o1 => existingTeacherStudent.some(o2 => o1.id === o2.student_id));
+    }
+
+    let newStudentObj =  students.map(s => ({
         email: s
-    }));
+    })).filter(o1 => !existingStudent.some(o2 => o1.email === o2.email));
+
+    existingStudent = existingStudent.filter(o1 => !studentToSkip.some(o2 => o1.id === o2.id));
 
     return await db.sequelize.transaction(async (t) => {
         let studentId = [];
-        await db.student.bulkCreate(studentObj, {ignoreDuplicates: true, transaction: t})
+        await db.student.bulkCreate(newStudentObj, {transaction: t})
         .then(function (student, err) {
             if (err) {
              throw err;
@@ -47,12 +67,12 @@ const functions = {
     })
   },
 
-  getCommonStudents: async function (query) {
-    let teacherEmail = [];
-    if (!Array.isArray(query)) {
-      teacherEmail.push(query);
-    } else {
-      teacherEmail = query;
+  getCommonStudents: async function (teacherEmails) {
+    let teacherData = await db.teacher.findAll({
+        where: {email: teacherEmails},
+    })
+    if (!teacherData) {
+        throw new Error("teacher does not exists");
     }
 
     return await db.student.findAll({
@@ -61,7 +81,7 @@ const functions = {
         ],
         include:[{
             model: db.teacher,
-            where: {email: teacherEmail}
+            where: {email: teacherEmails}
         }],
         group: ['student.id', 'teachers.id']
     }).then(function (data, err) {
@@ -72,7 +92,7 @@ const functions = {
         let studentEmail = [];
         if (result?.length) {
             result.forEach(e => {
-               if (e.teachers.length === teacherEmail.length) {
+               if (e.teachers.length === teacherEmails.length) {
                     studentEmail.push(e.email);
                }
             })
@@ -86,11 +106,11 @@ const functions = {
     if (!studentData) {
         throw new Error("student does not exists");
     }
-    if (!studentData.status) {
+    if (!studentData.is_suspended) {
         throw new Error("student already suspended");
     }
     return await db.student.update(
-        { status: false },
+        { is_suspended: false },
         { where: { email: student} }
     )
   },
@@ -118,7 +138,7 @@ const functions = {
             attributes: ['email'],
             where: {email: teacher}
         }],
-        where: { status: true }
+        where: { is_suspended: true }
     }).then((data, err) => {
         if (err) {
             throw err;

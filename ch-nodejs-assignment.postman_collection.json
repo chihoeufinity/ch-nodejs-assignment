@@ -119,12 +119,12 @@
 			"response": []
 		},
 		{
-			"name": "localhost:3000/api/commonstudents?teacher=teacherken%40gmail.com",
+			"name": "localhost:3000/api/commonstudents?teacher[]=teacherken%40gmail.com",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:3000/api/commonstudents?teacher=teacherken%40gmail.com",
+					"raw": "localhost:3000/api/commonstudents?teacher[]=teacherken%40gmail.com",
 					"host": [
 						"localhost"
 					],
@@ -149,11 +149,11 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:3306/api/commonstudents?teacher=teacherken%40gmail.com&teacher=teacherjoe%40gmail.com",
+					"raw": "localhost:3000/api/commonstudents?teacher=teacherken%40gmail.com&teacher=teacherjoe%40gmail.com",
 					"host": [
 						"localhost"
 					],
-					"port": "3306",
+					"port": "3000",
 					"path": [
 						"api",
 						"commonstudents"
@@ -215,11 +215,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:3306/api/retrievefornotifications",
+					"raw": "localhost:3000/api/retrievefornotifications",
 					"host": [
 						"localhost"
 					],
-					"port": "3306",
+					"port": "3000",
 					"path": [
 						"api",
 						"retrievefornotifications"
@@ -243,11 +243,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:3306/api/retrievefornotifications",
+					"raw": "localhost:3000/api/retrievefornotifications",
 					"host": [
 						"localhost"
 					],
-					"port": "3306",
+					"port": "3000",
 					"path": [
 						"api",
 						"retrievefornotifications"

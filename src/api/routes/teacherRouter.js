@@ -7,7 +7,8 @@ const router = Router({
   caseSensitive: true
 })
 
-// Use imported routes in router
-router.use('/api/registerTeacher', registerTeacher);
+router.post('/api/registerTeacher', (req, res) => {
+    registerTeacher(req, res);
+})
 
 export default router;

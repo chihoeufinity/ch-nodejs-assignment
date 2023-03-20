@@ -5,7 +5,7 @@ export default (sequelize, Sequelize) => {
           allowNull: false,
           unique: true
         },
-        status: {
+        is_suspended: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
           defaultValue: true
