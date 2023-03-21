@@ -116,12 +116,28 @@ const functions = {
   },
 
   retrieveStudentForNoti: async function (teacher, students) {
-    let teacherData = await db.teacher.findOne({where: {email: teacher}});
+    const teacherData = await db.teacher.findOne({where: {email: teacher}});
     if (!teacherData) {
         throw new Error("teacher does not exists");
     }
-    const mentionedStudent = db.student.findAll({where: {email: students, is_suspended: false}, raw: true});
-    const registeredStudent = db.student.findAll({
+    const mentionedStudent = await db.student.findAll({
+        where: {
+            email: students, 
+            is_suspended: false
+        }, 
+        raw: true
+    });
+    if (!mentionedStudent?.length) {
+        throw new Error(`${students} does not exists`);
+    } else {
+        const mentionedStudentEmailArr = mentionedStudent.map(s => s.email);
+        const notExistsStudent = students.filter(val => !mentionedStudentEmailArr.includes(val));
+        if (notExistsStudent.length) {
+            throw new Error(`${notExistsStudent} does not exists`);
+        }
+    }
+
+    const registeredStudent = await db.student.findAll({
         attributes: ['email'],
         raw: true,
         include:[{
@@ -132,11 +148,7 @@ const functions = {
         where: { is_suspended: false }
     });
 
-    const res = await Promise.all([mentionedStudent, registeredStudent]);
-    if(!res[0]?.length && !res[1]?.length) {
-        throw new Error("No student found");
-    }
-    const studentObjArray = [...res[0], ...res[1]];
+    const studentObjArray = [...registeredStudent, ...mentionedStudent];
     let studentEmails = studentObjArray.map(s => s.email);
     studentEmails = [...new Set(studentEmails)];
 
