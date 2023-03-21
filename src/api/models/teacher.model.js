@@ -4,11 +4,6 @@ export default (sequelize, Sequelize) => {
           type: Sequelize.STRING,
           allowNull: false,
           unique: true
-        },
-        is_suspended: {
-          type: Sequelize.BOOLEAN,
-          allowNull: false,
-          defaultValue: true
         }
     },{
         tableName: "teacher",

@@ -25,7 +25,8 @@ const getCommonStudents = async function (req, res, next) {
         }
 
         // Call studentService to response with data
-        let result = await studentService.getCommonStudents(req.query.teacher);
+        let teacherEmails = Array.isArray(req.query.teacher) ? req.query.teacher : [req.query.teacher];
+        let result = await studentService.getCommonStudents(teacherEmails);
         res.status(StatusCodes.OK).send({students: result});
     } catch (err) {
         res.status(StatusCodes.BAD_REQUEST).send({

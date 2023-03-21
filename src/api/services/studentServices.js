@@ -21,6 +21,12 @@ const functions = {
     });
 
     let existingStudentId = existingStudent.map(s => s.id) || [];
+
+    // Get student email that not yet register in database
+    let newStudentObj =  students.map(s => ({
+        email: s
+    })).filter(o1 => !existingStudent.some(o2 => o1.email === o2.email));
+
     let existingTeacherStudent = [];
 
     if (teacherId && existingStudentId) {
@@ -31,15 +37,9 @@ const functions = {
                 student_id: existingStudentId
             }, raw: true
         });
-
-        existingTeacherStudent = existingStudent.filter(o1 => existingTeacherStudent.some(o2 => o1.id === o2.student_id));
     }
 
-    let newStudentObj =  students.map(s => ({
-        email: s
-    })).filter(o1 => !existingStudent.some(o2 => o1.email === o2.email));
-
-    let newTeacherStudentRecord = existingStudent.filter(o1 => !existingTeacherStudent.some(o2 => o1.id === o2.id));
+    let newTeacherStudentRecord = existingStudent.filter(o1 => !existingTeacherStudent.some(o2 => o1.id === o2.student_id));
 
     return await db.sequelize.transaction(async (t) => {
         let studentId = [];
@@ -106,11 +106,11 @@ const functions = {
     if (!studentData) {
         throw new Error("student does not exists");
     }
-    if (!studentData.is_suspended) {
+    if (studentData.is_suspended) {
         throw new Error("student already suspended");
     }
     return await db.student.update(
-        { is_suspended: false },
+        { is_suspended: true },
         { where: { email: student} }
     )
   },
@@ -120,17 +120,8 @@ const functions = {
     if (!teacherData) {
         throw new Error("teacher does not exists");
     }
-    let studentEmail = [];
-    await db.student.findAll({where: {email: students}}).then(function (data, err) {
-        let result = data.map(el => el.get({ plain: true })) || [];
-        if (result?.length) {
-            result.forEach(e => {
-                studentEmail.push(e.email);
-             })
-        }
-    });
-
-    return await db.student.findAll({
+    const mentionedStudent = db.student.findAll({where: {email: students, is_suspended: false}, raw: true});
+    const registeredStudent = db.student.findAll({
         attributes: ['email'],
         raw: true,
         include:[{
@@ -138,26 +129,19 @@ const functions = {
             attributes: ['email'],
             where: {email: teacher}
         }],
-        where: { is_suspended: true }
-    }).then((data, err) => {
-        if (err) {
-            throw err;
-        }
-
-        if (data?.length) {
-            data.forEach(e => {
-                if (!studentEmail.includes(e.email)){
-                    studentEmail.push(e.email);
-                }
-            })
-        }
-
-        if(!studentEmail.length) {
-            throw new Error("No student found");
-        }
-
-        return studentEmail;
+        where: { is_suspended: false }
     });
+
+    const res = await Promise.all([mentionedStudent, registeredStudent]);
+    if(!res[0]?.length && !res[1]?.length) {
+        throw new Error("No student found");
+    }
+    const studentObjArray = [...res[0], ...res[1]];
+    let studentEmails = studentObjArray.map(s => s.email);
+    studentEmails = [...new Set(studentEmails)];
+
+    return studentEmails;
+    
   }
 }
 

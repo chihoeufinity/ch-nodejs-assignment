@@ -1,5 +1,5 @@
 export const emailValidation = function (email) {
-    let regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    let regex = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
     if (Array.isArray(email)) {
         for(let i = 0; i < email.length; i++) {
@@ -9,6 +9,6 @@ export const emailValidation = function (email) {
         }
         return true;
     }
-    
+
     return regex.test(email);
 }

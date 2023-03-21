@@ -8,7 +8,7 @@ export default (sequelize, Sequelize) => {
         is_suspended: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
-          defaultValue: true
+          defaultValue: false
         }
     },{
         tableName: "student",
